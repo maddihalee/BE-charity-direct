@@ -166,4 +166,12 @@ app.MapPost("/subscription", (CharityDirectoryDbContext db, Subscription subscri
     return Results.Created($"/subscription/{subscription.Id}", subscription);
 });
 
+app.MapGet("/subscriptionsByCharity/{charityId}", (CharityDirectoryDbContext db, int charityId) =>
+{
+    var users = db.Users
+    .Where(u => u.Subscriptions.Any(sub => sub.charityId == charityId)).ToList();
+
+    return users;
+});
+
 app.Run();
