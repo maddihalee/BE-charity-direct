@@ -58,6 +58,14 @@ app.MapControllers();
 
 // Users
 
+//Create User
+app.MapPost("/register", (CharityDirectoryDbContext db, User user) =>
+{
+    db.Users.Add(user);
+    db.SaveChanges();
+    return Results.Created($"/user/{user.Id}", user);
+});
+
 app.MapGet("/checkuser/{uid}", (CharityDirectoryDbContext db, string uid) =>
 {
     var user = db.Users.Where(x => x.uid == uid).ToList();
@@ -95,7 +103,7 @@ app.MapGet("/charity/{id}", (CharityDirectoryDbContext db, int id) =>
     return charities;
 });
 
-app.MapPost("/api/charity", (CharityDirectoryDbContext db, Charity charity) =>
+app.MapPost("/charity", (CharityDirectoryDbContext db, Charity charity) =>
 {
     db.Charities.Add(charity);
     db.SaveChanges();
@@ -118,7 +126,7 @@ app.MapPut("/charity/{id}", (CharityDirectoryDbContext db, int id, Charity chari
     return Results.Ok(charity);
 });
 
-app.MapDelete("/api/charitiesbyID/{id}", (CharityDirectoryDbContext db, int id) =>
+app.MapDelete("/charitiesbyID/{id}", (CharityDirectoryDbContext db, int id) =>
 {
     Charity charity = db.Charities.SingleOrDefault(charity => charity.Id == id);
     if (charity == null)
@@ -133,7 +141,7 @@ app.MapDelete("/api/charitiesbyID/{id}", (CharityDirectoryDbContext db, int id) 
 
 // Subscriptions
 
-app.MapDelete("/api/subscriptionsbyID/{id}", (CharityDirectoryDbContext db, int id) =>
+app.MapDelete("/subscriptionsbyID/{id}", (CharityDirectoryDbContext db, int id) =>
 {
     Subscription subscription = db.Subscriptions.SingleOrDefault(subscription => subscription.Id == id);
     if (subscription == null)
@@ -151,5 +159,11 @@ app.MapGet("/subscription", (CharityDirectoryDbContext db) =>
     return db.Subscriptions.ToList();
 });
 
+app.MapPost("/subscription", (CharityDirectoryDbContext db, Subscription subscription) =>
+{
+    db.Subscriptions.Add(subscription);
+    db.SaveChanges();
+    return Results.Created($"/subscription/{subscription.Id}", subscription);
+});
 
 app.Run();
