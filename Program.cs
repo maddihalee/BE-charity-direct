@@ -56,6 +56,100 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Create endpoints here!
+// Users
+
+app.MapGet("/checkuser/{uid}", (CharityDirectoryDbContext db, string uid) =>
+{
+    var user = db.Users.Where(x => x.uid == uid).ToList();
+    if (uid == null)
+    {
+        return Results.NotFound();
+    }
+    else
+    {
+        return Results.Ok(user);
+    }
+});
+
+app.MapGet("/user", (CharityDirectoryDbContext db) =>
+{
+    return db.Users.ToList();
+});
+
+app.MapGet("/user/{id}", (CharityDirectoryDbContext db, int id) =>
+{
+    var user = db.Users.Where(u => u.Id == id);
+    return user;
+});
+
+// Charities 
+
+app.MapGet("/charity", (CharityDirectoryDbContext db) =>
+{
+    return db.Charities.ToList();
+});
+
+app.MapGet("/charity/{id}", (CharityDirectoryDbContext db, int id) =>
+{
+    var charities = db.Charities.SingleOrDefaultAsync(u => u.Id == id);
+    return charities;
+});
+
+app.MapPost("/api/charity", (CharityDirectoryDbContext db, Charity charity) =>
+{
+    db.Charities.Add(charity);
+    db.SaveChanges();
+    return Results.Created($"/api/charity/{charity.Id}", charity);
+});
+
+app.MapPut("/charity/{id}", (CharityDirectoryDbContext db, int id, Charity charity) =>
+{
+    Charity charityToUpdate = db.Charities.FirstOrDefault(c => c.Id == id);
+    if (charityToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    charityToUpdate.Name = charity.Name;
+    charityToUpdate.Description = charity.Description;
+    charityToUpdate.Id = charity.Id;
+    charityToUpdate.imgUrl = charity.imgUrl;
+    
+    db.SaveChanges();
+    return Results.Ok(charity);
+});
+
+app.MapDelete("/api/charitiesbyID/{id}", (CharityDirectoryDbContext db, int id) =>
+{
+    Charity charity = db.Charities.SingleOrDefault(charity => charity.Id == id);
+    if (charity == null)
+    {
+        return Results.NotFound();
+    }
+    db.Charities.Remove(charity);
+    db.SaveChanges();
+    return Results.NoContent();
+
+});
+
+// Subscriptions
+
+app.MapDelete("/api/subscriptionsbyID/{id}", (CharityDirectoryDbContext db, int id) =>
+{
+    Subscription subscription = db.Subscriptions.SingleOrDefault(subscription => subscription.Id == id);
+    if (subscription == null)
+    {
+        return Results.NotFound();
+    }
+    db.Subscriptions.Remove(subscription);
+    db.SaveChanges();
+    return Results.NoContent();
+
+});
+
+app.MapGet("/subscription", (CharityDirectoryDbContext db) =>
+{
+    return db.Subscriptions.ToList();
+});
+
 
 app.Run();
