@@ -159,8 +159,22 @@ app.MapGet("/subscription", (CharityDirectoryDbContext db) =>
     return db.Subscriptions.ToList();
 });
 
-app.MapPost("/subscription", (CharityDirectoryDbContext db, Subscription subscription) =>
+app.MapPost("/subscription", (CharityDirectoryDbContext db, int charityId, int userId) =>
 {
+    var charity = db.Charities.SingleOrDefault(c => c.Id == charityId);
+    var user = db.Users.SingleOrDefault(u => u.Id == userId);
+
+    if (charity == null || user == null)
+    {
+        return Results.NotFound();
+    }
+
+    var subscription = new Subscription
+    {
+        charityId = charity.Id,
+        userId = user.Id 
+    };
+
     db.Subscriptions.Add(subscription);
     db.SaveChanges();
     return Results.Created($"/subscription/{subscription.Id}", subscription);
@@ -172,6 +186,14 @@ app.MapGet("/subscriptionsByCharity/{charityId}", (CharityDirectoryDbContext db,
     .Where(u => u.Subscriptions.Any(sub => sub.charityId == charityId)).ToList();
 
     return users;
+});
+
+app.MapGet("/subscriptionsByUser/{userId}", (CharityDirectoryDbContext db, int userId) =>
+{
+    var user = db.Users.SingleOrDefault(u => u.Id == userId);
+
+    var subscriptions = db.Subscriptions.Where(sub => sub.userId == userId).ToList();
+    return subscriptions;
 });
 
 app.Run();
