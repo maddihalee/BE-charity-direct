@@ -2,6 +2,7 @@
 using BE_charity_direct;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BE_charity_direct.Migrations
 {
     [DbContext(typeof(CharityDirectoryDbContext))]
-    partial class CharityDirectoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231028152442_Subscriptions")]
+    partial class Subscriptions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
