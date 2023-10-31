@@ -159,7 +159,7 @@ app.MapGet("/subscription", (CharityDirectoryDbContext db) =>
     return db.Subscriptions.ToList();
 });
 
-app.MapPost("/{charityId}/subscription/{userId}", (CharityDirectoryDbContext db, int charityId, int userId) =>
+app.MapPost("/subscription", (CharityDirectoryDbContext db, int charityId, int userId) =>
 {
     var charity = db.Charities.SingleOrDefault(c => c.Id == charityId);
     var user = db.Users.SingleOrDefault(u => u.Id == userId);
